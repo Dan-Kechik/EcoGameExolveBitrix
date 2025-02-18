@@ -8,6 +8,9 @@ from fast_bitrix24 import Bitrix
 
 sms_api_key = os.environ['MTS_API_KEY']
 mng_phone = os.environ['MANAGER_PHONE']
+BITRIX_CODE = '1g7e615r73o9p9it'
+BITRIX_URL = r'https://b24-mgttck.bitrix24.ru/rest/1/' + BITRIX_CODE
+endpoint = Bitrix(BITRIX_URL)
 
 ### Bitrix
 
