@@ -127,24 +127,24 @@ def set_by_tel(tel, stage, num=1):
     print('client_id')
     print(client_id)
     if db.task_table[client_id, 'S1'] == 0:
-        return  # Client is not participant!
+        return -1  # Client is not participant!
     db.task_table[client_id, 'S'+str(stage)] = num
+    return num
 
 
 @app.route('/receive_data', methods=['POST'])
 def receive_data():
     print('Receiving...')
-    # Check if eco day is started
-    if db.task_table.empty: return
     SMS_data = request.form.to_dict()
     if SMS_data.get('event_id') == 'DIRECTION_OUTGOING':
         print('SMS not received')
-        return
+        return '-2', 200
     stage = text_to_stage(SMS_data.get('text'))
     print(stage)
     if stage == -1:
-        return
-    set_by_tel(SMS_data.get('sender'), stage)
+        return '-3', 200
+    num = set_by_tel(SMS_data.get('sender'), stage)
+    return str(num), 200
 
 
 def start_eco_day():
