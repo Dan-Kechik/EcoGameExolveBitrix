@@ -136,6 +136,10 @@ def set_by_tel(tel, stage, num=1):
 def receive_data():
     print('Receiving...')
     SMS_data = request.form.to_dict()
+    print(request.url)
+    print(request.form)
+    print(SMS_data)
+    print(request.args)
     if SMS_data.get('event_id') == 'DIRECTION_OUTGOING':
         print('SMS not received')
         return '-2', 200
