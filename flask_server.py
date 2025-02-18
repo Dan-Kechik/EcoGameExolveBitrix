@@ -5,6 +5,7 @@ import os
 from dataclasses import dataclass
 import pandas as pd
 from fast_bitrix24 import Bitrix
+import sched, time
 
 sms_api_key = os.environ['MTS_API_KEY']
 mng_phone = os.environ['MANAGER_PHONE']
@@ -98,7 +99,6 @@ SEND_STRINGS = {1: 'Приветствуем Вас! Вы готовы подд�
 WHAT_TO_ANSWER = 'В качестве подтверждения выполнения задания пришлите нам: '
 app = Flask(__name__)
 db = DB()
-import sched, time
 START_DELAY = 2  # For test
 DELAY = 20
 s = sched.scheduler(time.time, time.sleep)
@@ -109,6 +109,7 @@ def send_notif(stage: int):
     if stage>1:
         index_to_send = db.task_table['S1'] == 1
     message = SEND_STRINGS[stage] + f'\n' + WHAT_TO_ANSWER + list(STAGE_DICT)[stage] + f'\n' + BYE_TEXT
+    print(message)
     for ai in db.task_table.loc[index_to_send]:
         recipient = db.get_phone(ai['ID'])
         send_SMS(recipient, message)
@@ -123,6 +124,8 @@ def text_to_stage(text: str):
 
 def set_by_tel(tel, stage, num=1):
     client_id = db.phone_table[tel]
+    print('client_id')
+    print(client_id)
     if db.task_table[client_id, 'S1'] == 0:
         return  # Client is not participant!
     db.task_table[client_id, 'S'+str(stage)] = num
@@ -130,23 +133,31 @@ def set_by_tel(tel, stage, num=1):
 
 @app.route('/receive_data', methods=['POST'])
 def receive_data():
+    print('Receiving...')
     # Check if eco day is started
     if db.task_table.empty: return
     SMS_data = request.form.to_dict()
     if SMS_data.get('event_id') == 'DIRECTION_OUTGOING':
+        print('SMS not received')
         return
     stage = text_to_stage(SMS_data.get('text'))
+    print(stage)
     if stage == -1:
         return
     set_by_tel(SMS_data.get('sender'), stage)
 
 
 def start_eco_day():
+    print('Initing...')
     db.__init__()
     contacts = get_contacts()
+    print(contacts)
     for c in contacts:
         db.add_client_phones(c)
         db.add_task_item(c)
+    print(db.task_table)
+    print(db.phone_table)
+    print('Inited')
 
 
 def finish_eco_day():
@@ -163,6 +174,7 @@ def finish_eco_day():
 
 def main():
     # Schedule tasks
+    print('Started')
     s.enter(START_DELAY, 1, start_eco_day, argument=())
     for ai in range(8):
         s.enter(START_DELAY+DELAY*(ai+1), 1, send_notif, argument=(ai,))

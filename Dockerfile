@@ -14,6 +14,7 @@ RUN pip install flask
 RUN pip install requests
 RUN pip install pandas
 RUN pip install fast_bitrix24
+RUN pip install schedule
 
 # Make port 5000 available to the world outside this container
 EXPOSE 5000
