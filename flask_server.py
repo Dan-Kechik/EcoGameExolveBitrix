@@ -135,12 +135,8 @@ def set_by_tel(tel, stage, num=1):
 @app.route('/receive_data', methods=['POST'])
 def receive_data():
     print('Receiving...')
-    SMS_data = request.form.to_dict()
-    print(request.url)
-    print(request.form)
+    SMS_data = request.get_json()
     print(SMS_data)
-    print(request.args)
-    print(request.get_json())
     if SMS_data.get('event_id') == 'DIRECTION_OUTGOING':
         print('SMS not received')
         return '-2', 200
@@ -184,8 +180,8 @@ def main():
     for ai in range(8):
         s.enter(START_DELAY+DELAY*(ai+1), 1, send_notif, argument=(ai,))
     s.enter(DELAY*10, 1, finish_eco_day, argument=())
-    app.run(host='0.0.0.0', port=5000)
     s.run()
+    app.run(host='0.0.0.0', port=5000)
 
 
 if __name__ == '__main__':
