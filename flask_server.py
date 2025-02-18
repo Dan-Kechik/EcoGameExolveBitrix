@@ -148,7 +148,7 @@ def receive_data():
     return str(num), 200
 
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['POST', 'GET'])
 def ecoday():
     print('ecoday!!!!!!!!!!!!!')
     start_eco_day()
