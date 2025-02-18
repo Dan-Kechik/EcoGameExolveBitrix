@@ -180,6 +180,7 @@ def main():
         s.enter(START_DELAY+DELAY*(ai+1), 1, send_notif, argument=(ai,))
     s.enter(DELAY*10, 1, finish_eco_day, argument=())
     app.run(host='0.0.0.0', port=5000)
+    s.run()
 
 
 if __name__ == '__main__':
