@@ -148,6 +148,16 @@ def receive_data():
     return str(num), 200
 
 
+@app.route('/', methods=['POST'])
+def ecoday():
+    print('ecoday!!!!!!!!!!!!!')
+    start_eco_day()
+    for ai in range(8):
+        send_notif(ai)
+        time.sleep(30)
+    finish_eco_day()
+
+
 def start_eco_day():
     print('Initing...')
     db.__init__()
@@ -181,11 +191,6 @@ def main():
         s.enter(START_DELAY+DELAY*(ai+1), 1, send_notif, argument=(ai,))
     s.enter(DELAY*10, 1, finish_eco_day, argument=())
     s.run()
-    start_eco_day()
-    for ai in range(8):
-        send_notif(ai)
-        time.sleep(30)
-    finish_eco_day()
     app.run(host='0.0.0.0', port=5000)
 
 
