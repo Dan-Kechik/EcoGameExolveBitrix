@@ -156,6 +156,8 @@ def ecoday():
         send_notif(ai)
         time.sleep(30)
     finish_eco_day()
+    print(str(db.task_table))
+    return str(db.task_table), 200
 
 
 def start_eco_day():
