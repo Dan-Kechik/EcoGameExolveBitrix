@@ -140,6 +140,7 @@ def receive_data():
     print(request.form)
     print(SMS_data)
     print(request.args)
+    print(request.get_json())
     if SMS_data.get('event_id') == 'DIRECTION_OUTGOING':
         print('SMS not received')
         return '-2', 200
